@@ -1,6 +1,12 @@
+
+
+
+
+
 gvfs gvfs-mtp
 install essential funciton os-prober on dualboot if (now on servermode false)
 change set keymap function
 configure network funciton
 make SWAP_SIZE do someting
 add max option to ROOT_SIZE
+fix grub - didnt work after first test

@@ -1,21 +1,23 @@
 #!/bin/bash
 
 ### CONFIGURABLE SETTINGS ###
-DISK="/dev/sda"             # Default disk for installation
+UNATTENDED=true            # If true, script runs without prompts
+SERVER_MODE=false           # If true, installs systemd-networkd & iwd (minimal server setup)
 HOSTNAME="archmachine"      # Default hostname
 USERNAME="admin"            # Default user
-FILESYSTEM="ext4"           # Default filesystem (ext4, btrfs, etc.)
-USE_SWAP=true               # Enable swap partition
-UNATTENDED=false            # If true, script runs without prompts
-KEYMAP="colemak"            # Keyboard layout (e.g., us, colemak, de-latin1, etc.)
-SERVER_MODE=false           # If true, installs systemd-networkd & iwd (minimal server setup)
 PASSWORD=""                 # Set to empty for manual input, or define a password
+CPU_VENDOR="amd"            # CPU vendor (intel/amd) for microcode
+KERNEL="linux"              # Kernel choice (linux/linux-lts/linux-zen/linux-hardened)
+DISK="/dev/sda"             # Default disk for installation
+FILESYSTEM="ext4"           # Default filesystem (ext4, btrfs, etc.)
+ROOT_SIZE="40G"             # Size for root partition (when auto-partitioning)
+USE_SWAP=false              # Enable swap partition
+SWAP_SIZE="4G"              # Size for swap partition
 TIMEZONE="UTC"              # Default timezone
 LOCALE="en_US.UTF-8"        # Default locale
-ROOT_SIZE="40G"             # Size for root partition (when auto-partitioning)
-SWAP_SIZE="4G"              # Size for swap partition
-CPU_VENDOR="intel"          # CPU vendor (intel/amd) for microcode
-KERNEL="linux"              # Kernel choice (linux/linux-lts/linux-zen/linux-hardened)
+KEYMAP="colemak"            # Keyboard layout (us, colemak, fr)
+
+
 
 
 ### FUNCTION: Check if running as root ###
@@ -25,7 +27,6 @@ check_root() {
         exit 1
     fi
 }
-
 ### FUNCTION: Ask user for confirmation ###
 ask_user() {
     local prompt="$1"
@@ -211,6 +212,28 @@ set_keymap() {
     esac
 }
 
+
+### FUNCTION: Configure Security ###
+configure_security() {
+    arch-chroot /mnt /bin/bash <<EOF
+    # Configure SSH
+    pacman -S --noconfirm openssh
+    systemctl enable sshd
+
+    # Basic firewall setup
+    pacman -S --noconfirm ufw
+    systemctl enable ufw
+    ufw default deny incoming
+    ufw default allow outgoing
+    ufw enable
+
+    # Harden system settings
+    echo "kernel.kptr_restrict=2" >> /etc/sysctl.d/51-kptr-restrict.conf
+    echo "kernel.dmesg_restrict=1" >> /etc/sysctl.d/51-dmesg-restrict.conf
+    echo "net.ipv4.tcp_syncookies=1" >> /etc/sysctl.d/51-tcp-hardening.conf
+EOF
+}
+
 ### FUNCTION: Configure System Inside Chroot ###
 configure_system() {
     echo "Configuring system inside chroot..."
@@ -297,26 +320,6 @@ finalize_installation() {
     fi
 }
 
-### FUNCTION: Configure Security ###
-configure_security() {
-    arch-chroot /mnt /bin/bash <<EOF
-    # Configure SSH
-    pacman -S --noconfirm openssh
-    systemctl enable sshd
-
-    # Basic firewall setup
-    pacman -S --noconfirm ufw
-    systemctl enable ufw
-    ufw default deny incoming
-    ufw default allow outgoing
-    ufw enable
-
-    # Harden system settings
-    echo "kernel.kptr_restrict=2" >> /etc/sysctl.d/51-kptr-restrict.conf
-    echo "kernel.dmesg_restrict=1" >> /etc/sysctl.d/51-dmesg-restrict.conf
-    echo "net.ipv4.tcp_syncookies=1" >> /etc/sysctl.d/51-tcp-hardening.conf
-EOF
-}
 
 # Start script execution
 check_root
@@ -329,4 +332,4 @@ generate_fstab
 set_keymap
 configure_security
 configure_system
-finalize_installation
+# finalize_installation COMMENTED OUT FOR TESTING

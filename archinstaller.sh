@@ -5,7 +5,7 @@ UNATTENDED=true            # If true, script runs without prompts
 SERVER_MODE=false           # If true, installs systemd-networkd & iwd (minimal server setup)
 HOSTNAME="archmachine"      # Default hostname
 USERNAME="admin"            # Default user
-PASSWORD=""                 # Set to empty for manual input, or define a password
+PASSWORD="password"         # Set to empty for manual input, or define a password
 CPU_VENDOR="amd"            # CPU vendor (intel/amd) for microcode
 KERNEL="linux"              # Kernel choice (linux/linux-lts/linux-zen/linux-hardened)
 DISK="/dev/sda"             # Default disk for installation
@@ -16,8 +16,6 @@ SWAP_SIZE="4G"              # Size for swap partition
 TIMEZONE="UTC"              # Default timezone
 LOCALE="en_US.UTF-8"        # Default locale
 KEYMAP="colemak"            # Keyboard layout (us, colemak, fr)
-
-
 
 
 ### FUNCTION: Check if running as root ###
@@ -332,4 +330,4 @@ generate_fstab
 set_keymap
 configure_security
 configure_system
-# finalize_installation COMMENTED OUT FOR TESTING
+finalize_installation

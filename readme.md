@@ -14,7 +14,7 @@ loadkeys colemak
 Curl the script:
 
 ```bash
-curl -o installer.sh https://raw.githubusercontent.com/thetreesee/archinstaller/main/archinstaller.sh
+curl -o installer.sh https://raw.githubusercontent.com/thetreesee/archinstaller/main/installer.sh
 ```
 
 Change the settings if needed

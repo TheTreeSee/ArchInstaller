@@ -13,6 +13,17 @@ fix keyboard laguage us be azerty qwerty support
 fix ssh working out of box
 fix dual boot partition table stuffs
 fix grub - didnt work after first test
+fix network
+
+for simple network setup:
+- /etc/systemd/network/filename.network
+```
+[Match]
+Name=eth0
+
+[Network]
+DHCP=yes
+```
 
 install postinstall and make it run on boot.
 at end of postinstall disable run on boot.

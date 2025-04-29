@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ### CONFIGURABLE SETTINGS ###
-UNATTENDED=true            # If true, script runs without prompts
+UNATTENDED=true             # If true, script runs without prompts
 SERVER_MODE=false           # If true, installs systemd-networkd & iwd (minimal server setup)
 HOSTNAME="archmachine"      # Default hostname
 USERNAME="admin"            # Default user

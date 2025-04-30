@@ -1,19 +1,16 @@
-
-
-
-
+ToDo:
 firewalld over ufw?
 gvfs gvfs-mtp
 install essential funciton os-prober on dualboot if (now on servermode false)
-change set keymap function
-configure network funciton
+change set keymap function and fix keyboard laguage us be azerty qwerty support
+
 make SWAP_SIZE do someting
 add max option to ROOT_SIZE
-fix keyboard laguage us be azerty qwerty support
 fix ssh working out of box
 fix dual boot partition table stuffs
-fix grub - didnt work after first test
-fix network
+fix network and configure network funciton
+add custom package install field in settings
+option REMOVE_INSTALLERS to remove install files or leave them in home?
 
 for simple network setup:
 - /etc/systemd/network/filename.network
@@ -25,7 +22,7 @@ Name=eth0
 DHCP=yes
 ```
 
+Doing:
+
 install postinstall and make it run on boot.
 at end of postinstall disable run on boot.
-
-option REMOVE_INSTALLERS to remove install files or leave them in home?

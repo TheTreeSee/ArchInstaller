@@ -16,7 +16,7 @@ SWAP_SIZE="4G"              # Size for swap partition
 TIMEZONE="UTC"              # Default timezone
 LOCALE="en_US.UTF-8"        # Default locale
 KEYMAP="colemak"            # Keyboard layout (us, colemak, fr)
-
+PACKEGES=""                 # List of extra packages to install
 
 ### FUNCTION: Check if running as root ###
 check_root() {
@@ -277,22 +277,46 @@ configure_system() {
 
     # Configure secure sudo settings
     cat > /etc/sudoers.d/00-wheel <<END
-Defaults        secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-Defaults        env_reset
-Defaults        mail_badpass
-Defaults        passwd_timeout=0
-Defaults        timestamp_timeout=5
-Defaults        badpass_message="Password is wrong, please try again"
-Defaults        editor=/usr/bin/vim
-Defaults        insults
+    Defaults        secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    Defaults        env_reset
+    Defaults        mail_badpass
+    Defaults        passwd_timeout=0
+    Defaults        timestamp_timeout=5
+    Defaults        badpass_message="Password is wrong, please try again"
+    Defaults        editor=/usr/bin/vim
+    Defaults        insults
 
-# Allow members of group wheel to execute any command after authentication
-%wheel ALL=(ALL:ALL) ALL
-END
+    # Allow members of group wheel to execute any command after authentication
+    %wheel ALL=(ALL:ALL) ALL
+    END
 
     chmod 440 /etc/sudoers.d/00-wheel
 
     echo "System configuration complete."
+
+    echo "Downloading postinstaller."
+    curl -o /root/postinstaller.sh https://raw.githubusercontent.com/thetreesee/archinstaller/main/postinstaller.sh
+    chmod +x /root/postinstaller.sh
+
+    # Create a systemd service to run it at first boot
+    cat <<EOL > /etc/systemd/system/postinstaller.service
+    [Unit]
+    Description=Run postinstaller script once
+    After=network-online.target
+    Wants=network-online.target
+
+    [Service]
+    Type=oneshot
+    ExecStart=/root/postinstaller.sh
+    RemainAfterExit=no
+
+    [Install]
+    WantedBy=multi-user.target
+    EOL
+
+    # Enable the one-shot service
+    systemctl enable postinstaller.service
+
     exit
 EOF
 }

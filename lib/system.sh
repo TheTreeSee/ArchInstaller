@@ -26,9 +26,9 @@ install_essentials() {
 
     # Install network tools based on server mode
     if [ "$SERVER_MODE" = true ]; then
-        pacstrap /mnt systemd-networkd
+        pacstrap /mnt systemd-networkd systemd-resolved
     else
-        pacstrap /mnt iwd systemd-networkd systemd-resolved os-prober
+        pacstrap /mnt iwd systemd-networkd systemd-resolved os-prober xdg-user-dirs
     fi
 
     echo "Essential packages installed."
@@ -48,18 +48,20 @@ set_keymap() {
         colemak)
             echo "KEYMAP=colemak" > /mnt/etc/vconsole.conf
             ;;
-        us)
+        be|fr|azerty)
+            # Belgian AZERTY (be-latin1 is the common console keymap for Belgian/French AZERTY)
+            echo "KEYMAP=be-latin1" > /mnt/etc/vconsole.conf
+            ;;
+        us|qwerty)
             echo "KEYMAP=us" > /mnt/etc/vconsole.conf
             ;;
-        azerty)
-            echo "KEYMAP=fr" > /mnt/etc/vconsole.conf
-            ;;
         *)
-            echo "Invalid keymap selected, defaulting to US."
+            echo "Invalid keymap selected, defaulting to US QWERTY."
             echo "KEYMAP=us" > /mnt/etc/vconsole.conf
             ;;
     esac
 }
+
 
 ### FUNCTION: Configure System Inside Chroot ###
 configure_system() {
@@ -78,10 +80,11 @@ configure_system() {
     locale-gen
     echo "LANG=$LOCALE" > /etc/locale.conf
 
+    # TODO MOVE TO NETWORK
     # Enable network services
-    systemctl enable systemd-networkd
-    systemctl enable systemd-resolved
-    [ "$SERVER_MODE" = false ] && systemctl enable iwd
+    # systemctl enable systemd-networkd
+    # systemctl enable systemd-resolved
+    # [ "$SERVER_MODE" = false ] && systemctl enable iwd
 
     # Install and configure GRUB
     grub-install --target=x87_64-efi --efi-directory=/boot --bootloader-id=GRUB
@@ -123,20 +126,20 @@ configure_system() {
 
     echo "System configuration complete."
 
-    echo "Downloading postinstaller."
-    curl -o /root/postinstaller.sh https://raw.githubusercontent.com/thetreesee/archinstaller/main/postinstaller.sh
-    chmod +x /root/postinstaller.sh
+    echo "Downloading postinstall."
+    curl -o /root/postinstall.sh https://raw.githubusercontent.com/thetreesee/archinstaller/main/postinstall.sh
+    chmod +x /root/postinstall.sh
 
     # Create a systemd service to run it at first boot
-    cat <<EOL > /etc/systemd/system/postinstaller.service
+    cat <<EOL > /etc/systemd/system/postinstall.service
     [Unit]
-    Description=Run postinstaller script once
+    Description=Run postinstall script once
     After=network-online.target
     Wants=network-online.target
 
     [Service]
     Type=oneshot
-    ExecStart=/root/postinstaller.sh
+    ExecStart=/root/postinstall.sh
     RemainAfterExit=no
 
     [Install]
@@ -144,7 +147,7 @@ configure_system() {
     EOL
 
     # Enable the one-shot service
-    systemctl enable postinstaller.service
+    systemctl enable postinstall.service
 
     exit
 EOF

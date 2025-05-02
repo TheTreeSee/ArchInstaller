@@ -1,33 +1,27 @@
 ToDo:
-firewalld over ufw?
+
 gvfs gvfs-mtp
-xdg-user-dirs network-manager
-install essential funciton os-prober on dualboot if (now on servermode false)
-change set keymap function and fix keyboard laguage us be azerty qwerty support
+install essential function os-prober on dual boot if (now on servermode false)
+
 change server mode to mode and check for desktop, server, ..?
+network-manager
 
-make swapsize work with 100% rootsize
-fix ssh working out of box
+make PACKAGE field do something
+make REMOVE_INSTALLERS do something
+
+After:
+reenable manual partitioning
+readd and fix support for btrfs and xfs
 fix dual boot partition table stuffs
-fix network and configure network funciton
-add custom package install field in settings
-option REMOVE_INSTALLERS to remove install files or leave them in home?
-
-for simple network setup:
-- /etc/systemd/network/filename.network
-```
-[Match]
-Name=eth0
-
-[Network]
-DHCP=yes
-```
 
 Doing:
-
 install postinstall and make it run on boot.
 at end of postinstall disable run on boot.
-
+fix network and configure network function
 
 ToTest:
-check if 100% works for rootsize
+check if 100% works for root size
+firewalld over ufw?
+ssh working out of box
+auto network setup
+make swap size work with 100% root size

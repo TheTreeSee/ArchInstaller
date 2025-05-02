@@ -7,12 +7,17 @@ configure_security() {
     pacman -S --noconfirm openssh
     systemctl enable sshd
 
-    # Basic firewall setup
-    pacman -S --noconfirm ufw
-    systemctl enable ufw
-    ufw default deny incoming
-    ufw default allow outgoing
-    ufw enable
+    # Basic firewall setup with firewalld
+    pacman -S --noconfirm firewalld
+    systemctl enable firewalld
+    systemctl start firewalld
+
+    # Set default zone to public and deny all incoming except SSH and Minecraft
+    firewall-cmd --permanent --set-default-zone=public
+    firewall-cmd --permanent --zone=public --add-service=ssh
+    firewall-cmd --permanent --zone=public --add-port=25565/tcp
+    firewall-cmd --permanent --zone=public --set-target=DROP
+    firewall-cmd --reload
 
     # Harden system settings
     echo "kernel.kptr_restrict=2" >> /etc/sysctl.d/51-kptr-restrict.conf

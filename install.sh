@@ -35,7 +35,7 @@ source lib/network.sh
 source lib/security.sh
 
 # Main installation flow
-system_check
+system_check #
 setup_disk
 format_partitions
 mount_partitions

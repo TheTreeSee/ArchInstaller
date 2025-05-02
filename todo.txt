@@ -9,6 +9,8 @@ network-manager
 make PACKAGE field do something
 make REMOVE_INSTALLERS do something
 
+add settings function to open settings when first run
+
 After:
 reenable manual partitioning
 readd and fix support for btrfs and xfs

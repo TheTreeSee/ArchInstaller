@@ -165,11 +165,11 @@ finalize_installation() {
     echo "- Keyboard Layout: $KEYMAP"
     echo "- Server Mode: $SERVER_MODE"
 
-    if [ "$UNATTENDED" = true ]; then
-        echo "Unattended mode enabled. Rebooting..."
-        reboot
-    else
+    # if [ "$UNATTENDED" = true ]; then
+    #     echo "Unattended mode enabled. Rebooting..."
+    #     reboot
+    # else
         read -p "Installation complete! Press Enter to reboot or Ctrl+C to stay in the live environment..."
         reboot
-    fi
+    # fi
 }

@@ -1,11 +1,12 @@
 ToDo:
 firewalld over ufw?
 gvfs gvfs-mtp
+xdg-user-dirs network-manager
 install essential funciton os-prober on dualboot if (now on servermode false)
 change set keymap function and fix keyboard laguage us be azerty qwerty support
+change server mode to mode and check for desktop, server, ..?
 
-make SWAP_SIZE do someting
-add max option to ROOT_SIZE
+make swapsize work with 100% rootsize
 fix ssh working out of box
 fix dual boot partition table stuffs
 fix network and configure network funciton
@@ -26,3 +27,7 @@ Doing:
 
 install postinstall and make it run on boot.
 at end of postinstall disable run on boot.
+
+
+ToTest:
+check if 100% works for rootsize

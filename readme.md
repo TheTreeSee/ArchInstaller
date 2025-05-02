@@ -11,29 +11,23 @@ If qwerty is not your preferred layout, change it.
 ```bash
 loadkeys colemak
 ```
+
 Curl the script:
 
 ```bash
-curl -o installer.sh https://raw.githubusercontent.com/thetreesee/archinstaller/main/installer.sh
+curl -s https://raw.githubusercontent.com/thetreesee/archinstaller/main/install.sh | bash
 ```
 
-Change the settings if needed
+## Configuration
 
-```bash
-vim installer.sh
-```
+Edit `config/settings.sh` to customize the installation parameters.
 
-Change its execution policies:
+## Structure
 
-```bash
-chmod +x installer.sh
-```
+- `install.sh`: Main entry point
+- `config/`: Configuration files
+- `lib/`: Core functionality modules
 
-and run it:
-
-```bash
-./installer.sh
-```
 ## Troubleshooting
 
 If you get the`curl failed to verify the legitimacy` error

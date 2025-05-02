@@ -10,21 +10,28 @@ CPU_VENDOR="amd"            # CPU vendor (intel/amd) for microcode
 KERNEL="linux"              # Kernel choice (linux/linux-lts/linux-zen/linux-hardened)
 DISK="/dev/sda"             # Default disk for installation
 FILESYSTEM="ext4"           # Default filesystem (ext4, btrfs, etc.)
-ROOT_SIZE="40G"             # Size for root partition (when auto-partitioning)
+ROOT_SIZE="100%"            # Size for root partition (100% = max)
 USE_SWAP=false              # Enable swap partition
 SWAP_SIZE="4G"              # Size for swap partition
 TIMEZONE="UTC"              # Default timezone
 LOCALE="en_US.UTF-8"        # Default locale
 KEYMAP="colemak"            # Keyboard layout (us, colemak, fr)
-PACKEGES=""                 # List of extra packages to install
+PACKAGES=""                 # List of extra packages to install
 
-### FUNCTION: Check if running as root ###
-check_root() {
+### FUNCTION: Check if running as root and UEFI mode###
+system_check() {
     if [ "$(id -u)" -ne 0 ]; then
         echo "Error: This script must be run as root!" >&2
         exit 1
     fi
+
+    if [ ! -d /sys/firmware/efi ]; then
+        echo "UEFI firmware not detected! Please boot in UEFI mode."
+        exit 1
+    fi
 }
+
+
 ### FUNCTION: Ask user for confirmation ###
 ask_user() {
     local prompt="$1"
@@ -61,10 +68,10 @@ auto_partition() {
     parted "$DISK" --script mklabel gpt
     parted "$DISK" --script mkpart ESP fat32 1MiB 512MiB
     parted "$DISK" --script set 1 esp on
-    parted "$DISK" --script mkpart PRIMARY "$FILESYSTEM" 512MiB 100%
+    parted "$DISK" --script mkpart PRIMARY "$FILESYSTEM" 512MiB "$ROOT_SIZE"
 
     if [ "$USE_SWAP" = true ]; then
-        parted "$DISK" --script mkpart SWAP linux-swap 1000MiB 4096MiB
+    parted "$DISK" --script mkpart SWAP linux-swap "$ROOT_SIZE" "$(( $(numfmt --from=iec "$ROOT_SIZE") + $(numfmt --from=iec "$SWAP_SIZE") ))B"
     fi
 
     echo "Disk partitioning completed."
@@ -255,7 +262,7 @@ configure_system() {
     [ "$SERVER_MODE" = false ] && systemctl enable iwd
 
     # Install and configure GRUB
-    grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+    grub-install --target=x87_64-efi --efi-directory=/boot --bootloader-id=GRUB
     grub-mkconfig -o /boot/grub/grub.cfg
 
     # Set root password
@@ -344,7 +351,7 @@ finalize_installation() {
 
 
 # Start script execution
-check_root
+system_check
 setup_disk
 format_partitions
 mount_partitions

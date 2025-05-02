@@ -1,4 +1,5 @@
 #!/bin/bash
+
 echo "Running postinstall script..."
 
 # EXAMPLE: install yay and a few packages

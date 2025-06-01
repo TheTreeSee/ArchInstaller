@@ -20,7 +20,7 @@ curl -s https://raw.githubusercontent.com/thetreesee/archinstaller/main/install.
 
 ## Configuration
 
-Edit `config/settings.sh` to customize the installation parameters.
+Edit `config/settings.conf` to customize the installation parameters.
 
 ## Structure
 

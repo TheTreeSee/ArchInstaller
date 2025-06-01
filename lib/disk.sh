@@ -1,20 +1,5 @@
 #!/bin/bash
 
-### FUNCTION: Select Disk ###
-# select_disk() {
-#     echo "Available Disks:"
-#     lsblk -d -n -p -o NAME,SIZE | grep -E "/dev/(sd|nvme|vd)"
-
-#     DISK=$(ask_user "Enter the disk to install Arch Linux on" "$DISK")
-
-#     if [ ! -b "$DISK" ]; then
-#         echo "Error: Selected disk $DISK does not exist!" >&2
-#         exit 1
-#     fi
-
-#     echo "Selected disk: $DISK"
-# }
-
 ### FUNCTION: Partition Disk Automatically ###
 auto_partition() {
     echo "Partitioning $DISK for UEFI + GRUB installation..."
@@ -51,6 +36,21 @@ auto_partition() {
 #     read -rp "Press Enter to continue..."
 # }
 
+### FUNCTION: Select Disk ###
+# select_disk() {
+#     echo "Available Disks:"
+#     lsblk -d -n -p -o NAME,SIZE | grep -E "/dev/(sd|nvme|vd)"
+
+#     DISK=$(ask_user "Enter the disk to install Arch Linux on" "$DISK")
+
+#     if [ ! -b "$DISK" ]; then
+#         echo "Error: Selected disk $DISK does not exist!" >&2
+#         exit 1
+#     fi
+
+#     echo "Selected disk: $DISK"
+# }
+
 ### FUNCTION: Disk Setup Flow ###
 setup_disk() {
     if [ "$UNATTENDED" = true ]; then
@@ -81,21 +81,7 @@ format_partitions() {
     mkfs.fat -F32 "${DISK}1"
 
     # Root Partition (second partition)
-    case "$FILESYSTEM" in
-        ext4)
-            mkfs.ext4 -F "${DISK}2"
-            ;;
-        # btrfs)
-        #     mkfs.btrfs -f "${DISK}2"
-        #     ;;
-        # xfs)
-        #     mkfs.xfs -f "${DISK}2"
-        #     ;;
-        # *)
-        #     echo "Error: Unsupported filesystem type '$FILESYSTEM'" >&2
-        #     exit 1
-        #     ;;
-    esac
+    mkfs.ext4 -F "${DISK}2"
 
     # Swap Partition (third partition)
     if [ "$USE_SWAP" = true ]; then

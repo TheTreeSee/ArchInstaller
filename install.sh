@@ -45,8 +45,7 @@ config_setup
 
 # lib/disk.sh
 #! setup_disk
-#! format_partitions
-#! mount_partitions
+
 
 # lib/system.sh
 #! install_base_system

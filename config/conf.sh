@@ -43,7 +43,7 @@ get_config_vars() {
 
 # Function to interactively configure settings
 interactive_config() {
-    if [[ "$UNATTENDED" == "true" ]]; then
+    if [[ "$RECONFIG" == false ]]; then
         return
     fi
 

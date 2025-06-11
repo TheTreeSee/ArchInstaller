@@ -44,8 +44,7 @@ source lib/security.sh
 config_setup
 
 # lib/disk.sh
-#! setup_disk
-
+#* setup_disk
 
 # lib/system.sh
 #! install_base_system

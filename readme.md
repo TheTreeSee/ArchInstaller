@@ -27,6 +27,7 @@ Edit `config/settings.conf` to customize the installation parameters.
 - `install.sh`: Main entry point
 - `config/`: Configuration files
 - `lib/`: Core functionality modules
+- `assets/`: Other files we use
 
 ## Troubleshooting
 
@@ -45,7 +46,3 @@ hwclock --hctosys
 ```
 
 now when you try again it should work.
-
-## Assets
-
-There are some extra scripts and configs that we use in here, you shouldn't worry about this stuff too much.

@@ -1,0 +1,6 @@
+alias ls="eza -l -F --header --icons -s type"
+alias cl="clear"
+alias ..="cd .."
+alias vim="nvim"
+alias svim="sudo nvim"
+alias df="df -h"

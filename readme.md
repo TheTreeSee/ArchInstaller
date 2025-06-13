@@ -12,10 +12,16 @@ If qwerty is not your preferred layout, change it.
 loadkeys colemak
 ```
 
-Curl the script:
+Curl the script and immediately execute:
 
 ```bash
 curl -s https://raw.githubusercontent.com/thetreesee/archinstaller/main/install.sh | bash
+```
+
+Just curl:
+
+```bash
+curl -o install.sh -s https://raw.githubusercontent.com/thetreesee/archinstaller/main/install.sh
 ```
 
 ## Configuration

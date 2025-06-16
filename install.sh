@@ -13,6 +13,7 @@
 #     "config/conf.sh"
 #     "config/settings.conf"
 #     "config/checks.sh"
+#     "lib/configure.sh"
 #     "lib/disk.sh"
 #     "lib/system.sh"
 #     "lib/network.sh"
@@ -32,6 +33,7 @@ source config/settings.conf
 source config/checks.sh
 source lib/utils.sh
 source lib/disk.sh
+source lib/configure.sh
 source lib/system.sh
 source lib/network.sh
 source lib/security.sh
@@ -47,6 +49,7 @@ config_setup
 #* setup_disk
 
 # lib/system.sh
+# setup_system
 #! install_base_system
 #! install_essentials
 #! generate_fstab
@@ -54,6 +57,9 @@ config_setup
 #! configure_security
 #! configure_system
 #! finalize_installation
+
+# lib/configure.sh
+# configure_system
 
 # Cleanup
 #* rm -rf "$TEMP_DIR"

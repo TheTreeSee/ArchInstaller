@@ -1,3 +1,4 @@
 config/conf.conf
 .test/*
 .vscode/*
+settings.conf.env

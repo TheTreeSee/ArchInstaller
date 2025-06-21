@@ -61,14 +61,11 @@ interactive_config() {
 
         # Special handling for password
         if [[ "$var" == "PASSWORD" ]]; then
-            read -sp "$var (hidden) [$current_value]: " input
+            safe_read new_value "$var=$current_value: " $current_value #TODO hide password input
             echo
         else
-            read -p "$var [$current_value]: " input
+            safe_read new_value "$var=$current_value: " $current_value
         fi
-
-        # Use new value if provided, otherwise keep current
-        new_value="${input:-$current_value}"
 
         # Add to new config
         new_config+="$var=$new_value\n"
@@ -85,5 +82,6 @@ interactive_config() {
 
 config_setup() {
     get_config "config/settings.conf"
+    get_config "config/settings.conf.env" # overwrite settings with settings from env
     interactive_config
 }

@@ -1,31 +1,56 @@
 #!/bin/bash
 
-# # Bootstrap script to download and run the installer
-# REPO_URL="https://raw.githubusercontent.com/thetreesee/archinstaller/main"
-# TEMP_DIR="/tmp/archinstaller"
+REPO_URL="https://raw.githubusercontent.com/thetreesee/archinstaller/main"
 
-# # Create temporary directory
-# mkdir -p "$TEMP_DIR"
-# cd "$TEMP_DIR" || exit 1
+usage() {
+  echo "Usage: $0 [-u|--url <base_url>]"
+  exit 1
+}
 
-# # Download all required files
-# declare -a FILES=(
-#     "config/conf.sh"
-#     "config/settings.conf"
-#     "config/checks.sh"
-#     "lib/configure.sh"
-#     "lib/disk.sh"
-#     "lib/system.sh"
-#     "lib/network.sh"
-#     "lib/security.sh"
-#     "lib/utils.sh"
-# )
+# Parse flags
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -u|--url)
+      if [[ -n $2 ]]; then
+        REPO_URL="$2"
+        shift 2
+      else
+        echo "Error: --url requires a value"
+        usage
+      fi
+      ;;
+    -h|--help)
+      usage
+      ;;
+    *)
+      echo "Unknown option: $1"
+      usage
+      ;;
+  esac
+done
 
-# for file in "${FILES[@]}"; do
-#     mkdir -p "$(dirname "$file")"
-#     curl -s "$REPO_URL/$file" -o "$file"
-#     chmod +x "$file"
-# done
+TEMP_DIR="/tmp/archinstaller"
+mkdir -p "$TEMP_DIR"
+cd "$TEMP_DIR" || exit 1
+
+declare -a FILES=(
+    "config/conf.sh"
+    "config/settings.conf"
+    "config/checks.sh"
+    "lib/configure.sh"
+    "lib/disk.sh"
+    "lib/system.sh"
+    "lib/network.sh"
+    "lib/security.sh"
+    "lib/utils.sh"
+)
+
+for file in "${FILES[@]}"; do
+    mkdir -p "$(dirname "$file")"
+    curl -s "$REPO_URL/$file" -o "$file"
+    chmod +x "$file"
+done
+
 
 # Source all files
 source config/conf.sh

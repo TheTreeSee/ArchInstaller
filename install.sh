@@ -19,6 +19,10 @@ while [[ $# -gt 0 ]]; do
         usage
       fi
       ;;
+    -o|--overwrite)
+      OVERWRITE=true
+      shift
+      ;;
     -h|--help)
       usage
       ;;
@@ -45,6 +49,16 @@ declare -a FILES=(
     "lib/utils.sh"
 )
 
+# add settings.conf.env to FILES if overwrite is true
+if [[ "$OVERWRITE" == true ]]; then
+    # check if settings.conf.env exists remotely
+    if curl --head --silent --fail "$REPO_URL/config/settings.conf.env" >/dev/null; then
+        FILES+=("config/settings.conf.env")
+    else
+        echo "Warning: config/settings.conf.env does not exist in the repository, skipping."
+    fi
+fi
+
 for file in "${FILES[@]}"; do
     mkdir -p "$(dirname "$file")"
     curl -s "$REPO_URL/$file" -o "$file"
@@ -54,7 +68,7 @@ done
 
 # Source all files
 source config/conf.sh
-source config/settings.conf
+source config/settings.conf #? why is this sourced here?
 source config/checks.sh
 source lib/utils.sh
 source lib/disk.sh

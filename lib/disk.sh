@@ -88,9 +88,13 @@ manual_partition() {
     echo "- Optional swap partition"
     echo
     echo "You will now be dropped into a shell. Type 'exit' when done."
-    read -rp "Press Enter to open a shell..."
+    press_enter "Press Enter to open a shell..."
 
-    bash
+    if [ -t 0 ]; then
+        bash
+    else
+        bash < /dev/tty
+    fi
 
     echo "Exited manual partition shell. Continuing setup..."
 }
@@ -114,11 +118,11 @@ select_disk() {
 set_partition_variables() {
     echo "=== Set Partition Variables ==="
 
-    read -rp "Enter EFI partition number (e.g., 1): " EFI
-    read -rp "Enter root partition number (e.g., 2): " ROOT
+    safe_read EFI "Enter EFI partition number (e.g., 1): "
+    safe_read ROOT "Enter root partition number (e.g., 2): "
 
     if [[ "$USE_SWAP" == true ]]; then
-        read -rp "Enter swap partition number (e.g., 3): " SWAP
+        safe_read SWAP "Enter swap partition number (e.g., 3): "
     fi
 
     export EFI ROOT SWAP

@@ -61,10 +61,9 @@ interactive_config() {
 
         # Special handling for password
         if [[ "$var" == "PASSWORD" ]]; then
-            safe_read new_value "$var=$current_value: " $current_value #TODO hide password input
-            echo
+            safe_read new_value "$var [$current_value]: " $current_value true
         else
-            safe_read new_value "$var=$current_value: " $current_value
+            safe_read new_value "$var [$current_value]: " $current_value
         fi
 
         # Add to new config

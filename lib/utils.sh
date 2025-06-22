@@ -4,15 +4,29 @@ safe_read() {
   local varname="$1"
   local prompt="$2"
   local default="$3"
+  local hidden="$4"  # if set to "true", hide input
   local input
 
   if [ -t 0 ]; then
-    # TTY available, use normal read
-    read -r -p "$prompt" input
+    # Interactive TTY available
+    if [[ "$hidden" == "true" ]]; then
+      read -r -s -p "$prompt" input
+      echo  # move to new line after silent input
+    else
+      read -r -p "$prompt" input
+    fi
   else
     # No TTY? Reroute to real terminal
-    echo -n "$prompt" > /dev/tty
-    read -r input < /dev/tty
+    if [[ "$hidden" == "true" ]]; then
+      echo -n "$prompt" > /dev/tty
+      stty -echo < /dev/tty
+      read -r input < /dev/tty
+      stty echo < /dev/tty
+      echo > /dev/tty
+    else
+      echo -n "$prompt" > /dev/tty
+      read -r input < /dev/tty
+    fi
   fi
 
   # Use default if nothing entered
@@ -24,6 +38,10 @@ safe_read() {
   printf -v "$varname" '%s' "$input"
 }
 
+press_enter() {
+  safe_read _dummy "$1" ""
+}
+
 ### FUNCTION: Ask User for Input ###
 ask_user() {
     local prompt="$1"
@@ -32,8 +50,8 @@ ask_user() {
         echo "$default"
         return
     fi
-    read -rp "$prompt [$default]: " response
-    echo "${response:-$default}"
+    safe_read response "$prompt [$default]: " default
+    echo $response
 }
 
 ### FUNCTION: Final Steps Before Reboot ###
@@ -53,7 +71,7 @@ finalize_installation() {
     #     echo "Unattended mode enabled. Rebooting..."
     #     reboot
     # else
-        read -p "Installation complete! Press Enter to reboot or Ctrl+C to stay in the live environment..."
+        press_enter "Installation complete! Press Enter to reboot or Ctrl+C to stay in the live environment..."
         reboot
     # fi
 }

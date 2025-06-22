@@ -90,13 +90,16 @@ config_setup
 #* setup_disk
 
 # lib/system.sh
-# setup_system
+setup_system
+
+# lib/security.sh
 #! configure_security
-#! configure_system
-#! finalize_installation
 
 # lib/configure.sh
 arch-chroot /mnt /bin/bash < configure.sh
+
+# lib/utils.sh
+#! finalize_installation
 
 # Cleanup
 #* rm -rf "$TEMP_DIR"

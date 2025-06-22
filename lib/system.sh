@@ -89,7 +89,4 @@ setup_system() {
     install_essentials
     generate_fstab
     set_keymap
-    configure_security
-    configure_system
-    finalize_installation
 }

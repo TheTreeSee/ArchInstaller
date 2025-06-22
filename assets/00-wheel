@@ -1,0 +1,11 @@
+Defaults        secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Defaults        env_reset
+Defaults        mail_badpass
+Defaults        passwd_timeout=0
+Defaults        timestamp_timeout=5
+Defaults        badpass_message="Password is wrong, please try again"
+Defaults        editor=/usr/bin/vim
+Defaults        insults
+
+# Allow members of group wheel to execute any command after authentication
+%wheel ALL=(ALL:ALL) ALL

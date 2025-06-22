@@ -1,0 +1,12 @@
+[Unit]
+Description=Run postinstall script once
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/root/postinstall.sh
+RemainAfterExit=no
+
+[Install]
+WantedBy=multi-user.target

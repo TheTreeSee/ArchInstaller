@@ -59,7 +59,7 @@ config_setup
 #! finalize_installation
 
 # lib/configure.sh
-# configure_system
+arch-chroot /mnt /bin/bash < configure.sh
 
 # Cleanup
 #* rm -rf "$TEMP_DIR"

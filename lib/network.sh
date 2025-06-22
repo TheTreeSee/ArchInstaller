@@ -22,3 +22,10 @@ DHCP=yes
 EOF
     done
 }
+
+
+# todo: MOVE TO NETWORK
+# Enable network services
+# systemctl enable systemd-networkd
+# systemctl enable systemd-resolved
+# [ "$SERVER_MODE" = false ] && systemctl enable iwd

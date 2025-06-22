@@ -91,10 +91,6 @@ config_setup
 
 # lib/system.sh
 # setup_system
-#! install_base_system
-#! install_essentials
-#! generate_fstab
-#! set_keymap
 #! configure_security
 #! configure_system
 #! finalize_installation
@@ -104,3 +100,5 @@ arch-chroot /mnt /bin/bash < configure.sh
 
 # Cleanup
 #* rm -rf "$TEMP_DIR"
+
+install_base_system

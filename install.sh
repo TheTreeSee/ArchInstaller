@@ -93,7 +93,7 @@ config_setup
 setup_system
 
 # lib/security.sh
-#! configure_security
+configure_security
 
 # lib/configure.sh
 arch-chroot /mnt /bin/bash < configure.sh

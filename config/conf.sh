@@ -81,6 +81,8 @@ interactive_config() {
 
 config_setup() {
     get_config "config/settings.conf"
-    get_config "config/settings.conf.env" # overwrite settings with settings from env
+    if [[ "$OVERWRITE" == true ]]; then
+        get_config "config/settings.conf.env" # overwrite settings with settings from env
+    fi
     interactive_config
 }

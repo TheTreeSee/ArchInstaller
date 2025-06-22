@@ -34,6 +34,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 TEMP_DIR="/tmp/archinstaller"
+rm -rf "$TEMP_DIR" 2>/dev/null
 mkdir -p "$TEMP_DIR"
 cd "$TEMP_DIR" || exit 1
 
@@ -56,6 +57,7 @@ if [[ "$OVERWRITE" == true ]]; then
         FILES+=("config/settings.conf.env")
     else
         echo "Warning: config/settings.conf.env does not exist in the repository, skipping."
+        OVERWRITE=false
     fi
 fi
 

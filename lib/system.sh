@@ -20,9 +20,8 @@ install_base_system() {
     # Install microcode based on CPU vendor
     local microcode=""
     if [ "$CPU_VENDOR" = "auto" ]; then
-        CPU_VENDOR=$(detect_cpu_vendor)
-        echo "Detected CPU vendor: $CPU_VENDOR"
-        if [ "$CPU_VENDOR" = "unknown" ]; then
+        microcode=$(detect_cpu_vendor)
+        if [ "$microcode" = "unknown" ]; then
             echo "Error: Unsupported CPU vendor detected. Please specify microcode manually."
             safe_read microcode "Enter microcode package (intel-ucode or amd-ucode or some other): "
         fi
@@ -34,7 +33,6 @@ install_base_system() {
 
     # Install base packages
     pacstrap /mnt base "$KERNEL" linux-firmware "$microcode"
-    echo "Base system installation complete."
 }
 
 ### FUNCTION: Install Essential Packages ###
@@ -42,7 +40,8 @@ install_essentials() {
     echo "Installing essential packages..."
 
     # Install GRUB and necessary tools
-    pacstrap /mnt systemd-networkd systemd-resolved grub efibootmgr base-devel neovim man-db man-pages git
+    pacstrap /mnt grub efibootmgr base-devel neovim man-db man-pages git
+    press_enter "Press Enter to continue after installing base packages."
 
     # Install network tools based on server mode
     if [ "$SERVER_MODE" = false ]; then

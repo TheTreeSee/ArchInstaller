@@ -87,7 +87,7 @@ source lib/security.sh
 config_setup
 
 # lib/disk.sh
-#* setup_disk
+setup_disk
 
 # lib/system.sh
 setup_system
@@ -96,12 +96,10 @@ setup_system
 configure_security
 
 # lib/configure.sh
-arch-chroot /mnt /bin/bash < configure.sh
+arch-chroot /mnt /bin/bash < lib/configure.sh
 
 # lib/utils.sh
 #! finalize_installation
 
 # Cleanup
 #* rm -rf "$TEMP_DIR"
-
-install_base_system

@@ -48,6 +48,7 @@ declare -a FILES=(
     "lib/network.sh"
     "lib/security.sh"
     "lib/utils.sh"
+    "assets/00-wheel"
 )
 
 # add settings.conf.env to FILES if overwrite is true
@@ -97,6 +98,12 @@ configure_security
 
 # lib/configure.sh
 arch-chroot /mnt /bin/bash < lib/configure.sh
+
+# lib/security.sh
+arch-chroot /mnt /bin/bash < lib/security.sh
+
+# lib/network.sh
+setup_network
 
 # lib/utils.sh
 #! finalize_installation

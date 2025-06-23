@@ -41,7 +41,6 @@ install_essentials() {
 
     # Install GRUB and necessary tools
     pacstrap /mnt grub efibootmgr base-devel neovim man-db man-pages git
-    press_enter "Press Enter to continue after installing base packages."
 
     # Install network tools based on server mode
     if [ "$SERVER_MODE" = false ]; then

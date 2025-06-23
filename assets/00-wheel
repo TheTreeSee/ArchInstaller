@@ -4,7 +4,7 @@ Defaults        mail_badpass
 Defaults        passwd_timeout=0
 Defaults        timestamp_timeout=5
 Defaults        badpass_message="Password is wrong, please try again"
-Defaults        editor=/usr/bin/vim
+Defaults        editor=/usr/bin/nvim
 Defaults        insults
 
 # Allow members of group wheel to execute any command after authentication

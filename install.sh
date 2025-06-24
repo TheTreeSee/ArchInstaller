@@ -48,6 +48,7 @@ declare -a FILES=(
     "lib/network.sh"
     "lib/security.sh"
     "lib/utils.sh"
+    "assets/00-wheel"
 )
 
 # add settings.conf.env to FILES if overwrite is true
@@ -96,6 +97,7 @@ setup_system
 configure_security
 
 # lib/configure.sh
+cp assets/00-wheel /mnt/etc/sudoers.d/00-wheel
 arch-chroot /mnt /bin/bash < lib/configure.sh
 
 # lib/utils.sh

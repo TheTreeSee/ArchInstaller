@@ -47,7 +47,6 @@ user_add() {
 
 # Configure sudo
 configure_sudo() {
-    cat ../assets/00-wheel > /etc/sudoers.d/00-wheel
     chmod 440 /etc/sudoers.d/00-wheel
 }
 

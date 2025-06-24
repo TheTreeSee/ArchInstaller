@@ -100,6 +100,12 @@ configure_security
 cp assets/00-wheel /mnt/etc/sudoers.d/00-wheel
 arch-chroot /mnt /bin/bash < lib/configure.sh
 
+# lib/security.sh
+arch-chroot /mnt /bin/bash < lib/security.sh
+
+# lib/network.sh
+setup_network
+
 # lib/utils.sh
 #! finalize_installation
 

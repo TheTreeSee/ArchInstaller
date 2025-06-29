@@ -1,33 +1,37 @@
 #!/bin/bash
 
 REPO_URL="https://raw.githubusercontent.com/thetreesee/archinstaller/main"
+OVERWRITE=false
 
 usage() {
-  echo "Usage: $0 [-u|--url <base_url>]"
+  cat <<EOF
+Usage: $0 [-u URL] [-o] [-h]
+
+Options:
+  -u URL    Set custom base URL (default: GitHub)
+  -o        Overwrite existing files
+  -h        Show this help message
+EOF
   exit 1
 }
 
-# Parse flags
-while [[ $# -gt 0 ]]; do
-  case $1 in
-    -u|--url)
-      if [[ -n $2 ]]; then
-        REPO_URL="$2"
-        shift 2
-      else
-        echo "Error: --url requires a value"
-        usage
-      fi
+while getopts ":u:oh" opt; do
+  case $opt in
+    u)
+      REPO_URL="$OPTARG"
       ;;
-    -o|--overwrite)
+    o)
       OVERWRITE=true
-      shift
       ;;
-    -h|--help)
+    h)
       usage
       ;;
-    *)
-      echo "Unknown option: $1"
+    \?)
+      echo "❌ Unknown option: -$OPTARG"
+      usage
+      ;;
+    :)
+      echo "❌ Option -$OPTARG requires an argument."
       usage
       ;;
   esac

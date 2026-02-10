@@ -57,7 +57,7 @@ install_essentials() {
 ### FUNCTION: Generate fstab ###
 generate_fstab() {
     echo "Generating fstab..."
-    genfstab -U /mnt >> /mnt/etc/fstab
+    genfstab -U /mnt > /mnt/etc/fstab
     echo "fstab generation complete."
 }
 

@@ -146,7 +146,7 @@ setup_disk() {
     CHOICE=$(ask_user "Choose an option (1/2/3)" "1")
 
     case "$CHOICE" in
-        1) auto_partition ;;
+        1) auto_partition && format_partitions && mount_partitions ;;
         2) select_disk && auto_partition && format_partitions && mount_partitions ;;
         3) manual_partition && set_partition_variables && format_partitions && mount_partitions ;;
         *) echo "Invalid option, exiting." && exit 1 ;;

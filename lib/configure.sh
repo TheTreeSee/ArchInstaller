@@ -20,9 +20,23 @@ configure_locale() {
 
 # Install GRUB
 install_grub() {
+    # Sanity: /boot must be mounted and contain a kernel
+    if ! mountpoint -q /boot; then
+        echo "❌ ERROR: /boot is not a mountpoint inside chroot. ESP likely not mounted."
+        exit 1
+    fi
+
+    if ! ls /boot/vmlinuz-* >/dev/null 2>&1; then
+        echo "❌ ERROR: No kernel found in /boot (no /boot/vmlinuz-*)."
+        echo "This usually means the ESP was mounted after pacstrap, hiding the kernel files."
+        echo "Try reinstalling kernel: pacman -S linux && mkinitcpio -P"
+        exit 1
+    fi
+
     grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
     grub-mkconfig -o /boot/grub/grub.cfg
 }
+
 
 # Set root password
 set_password() {

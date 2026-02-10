@@ -87,10 +87,10 @@ source config/settings.conf #? why is this sourced here?
 source config/checks.sh
 source lib/utils.sh
 source lib/disk.sh
-source lib/configure.sh
+# source lib/configure.sh
 source lib/system.sh
 source lib/network.sh
-source lib/security.sh
+# source lib/security.sh
 
 step "Running pre-install system checks"
 # config/checks.sh

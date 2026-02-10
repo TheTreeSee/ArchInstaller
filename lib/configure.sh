@@ -26,10 +26,22 @@ configure_locale() {
 # Install GRUB
 install_grub() {
     echo "[INFO] ${_log_prefix} Installing GRUB bootloader..."
-    # Sanity: /boot must be mounted and contain a kernel
+    # Sanity: /boot must be mounted and contain a kernel.
+    # If it's not mounted yet, try to mount it automatically using /etc/fstab.
     if ! mountpoint -q /boot; then
-        echo "[ERROR] ${_log_prefix} /boot is not a mountpoint inside chroot. ESP likely not mounted."
-        exit 1
+        echo "[WARN]  ${_log_prefix} /boot is not a mountpoint inside chroot; attempting to mount it..."
+
+        # Prefer fstab-based mounting
+        if grep -qE '^[^#]+\s+/boot\s+' /etc/fstab 2>/dev/null; then
+            if ! mount /boot; then
+                echo "[ERROR] ${_log_prefix} Failed to mount /boot using /etc/fstab. Please check your fstab entry for /boot."
+                exit 1
+            fi
+        else
+            echo "[ERROR] ${_log_prefix} No /boot entry found in /etc/fstab; cannot mount ESP automatically."
+            echo "        ${_log_prefix} Please mount your EFI system partition at /boot and re-run configure.sh."
+            exit 1
+        fi
     fi
 
     if ! ls /boot/vmlinuz-* >/dev/null 2>&1; then
@@ -90,6 +102,7 @@ if [ "$#" -gt 0 ]; then
         "$fn"
     done
 else
+    echo "[INFO] ${_log_prefix} Running Configure.sh"
     # Default flow
     set_hostname
     set_timezone

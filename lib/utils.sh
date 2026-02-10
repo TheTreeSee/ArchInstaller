@@ -1,5 +1,32 @@
 #!/bin/bash
 
+### GENERIC LOGGING HELPERS ###
+
+info() {
+  echo "[INFO] $*"
+}
+
+step() {
+  echo
+  echo "=============================="
+  echo "[STEP] $*"
+  echo "=============================="
+}
+
+success() {
+  echo "[OK] $*"
+}
+
+warn() {
+  echo "[WARN] $*" >&2
+}
+
+error() {
+  echo "[ERROR] $*" >&2
+}
+
+### SAFE INPUT HELPERS ###
+
 safe_read() {
   local varname="$1"
   local prompt="$2"
@@ -51,24 +78,24 @@ ask_user() {
         return
     fi
     safe_read response "$prompt [$default]: " default
-    echo $response
+    echo "$response"
 }
 
 ### FUNCTION: Final Steps Before Reboot ###
 finalize_installation() {
-    echo "Finalizing installation..."
-    echo "Unmounting partitions..."
+    step "Finalizing installation"
+    info "Unmounting partitions from /mnt..."
     umount -R /mnt
 
-    echo "Installation summary:"
-    echo "- Hostname: $HOSTNAME"
-    echo "- Username: $USERNAME"
-    echo "- Keyboard Layout: $KEYMAP"
-    echo "- Server Mode: $SERVER_MODE"
+    info "Installation summary:"
+    info "- Hostname: $HOSTNAME"
+    info "- Username: $USERNAME"
+    info "- Keyboard Layout: $KEYMAP"
+    info "- Server Mode: $SERVER_MODE"
 
     # todo: uncomment when testing is done
     # if [ "$UNATTENDED" = true ]; then
-    #     echo "Unattended mode enabled. Rebooting..."
+    #     info "Unattended mode enabled. Rebooting..."
     #     reboot
     # else
         press_enter "Installation complete! Press Enter to reboot or Ctrl+C to stay in the live environment..."

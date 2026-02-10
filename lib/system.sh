@@ -15,14 +15,14 @@ detect_cpu_vendor() {
 
 ### FUNCTION: Install Base System ###
 install_base_system() {
-    echo "Installing base system..."
+    step "Installing base system"
 
     # Install microcode based on CPU vendor
     local microcode=""
     if [ "$CPU_VENDOR" = "auto" ]; then
         microcode=$(detect_cpu_vendor)
         if [ "$microcode" = "unknown" ]; then
-            echo "Error: Unsupported CPU vendor detected. Please specify microcode manually."
+            warn "Unsupported CPU vendor detected. Please specify microcode manually."
             safe_read microcode "Enter microcode package (intel-ucode or amd-ucode or some other): "
         fi
     elif [ "$CPU_VENDOR" = "intel" ]; then
@@ -31,39 +31,44 @@ install_base_system() {
         microcode="amd-ucode"
     fi
 
-    # Install base packages
+    info "Installing base packages with kernel '$KERNEL' and microcode '$microcode'..."
     pacstrap /mnt base "$KERNEL" linux-firmware "$microcode"
 }
 
 ### FUNCTION: Install Essential Packages ###
 install_essentials() {
-    echo "Installing essential packages..."
+    step "Installing essential packages"
 
     # Install GRUB and necessary tools
+    info "Installing GRUB, base-devel and core tools..."
     pacstrap /mnt grub efibootmgr base-devel neovim man-db man-pages git
 
     # Install network tools based on server mode
     if [ "$SERVER_MODE" = false ]; then
+        info "Desktop mode detected; installing os-prober and xdg-user-dirs..."
         pacstrap /mnt os-prober xdg-user-dirs
     fi
 
     if [ "$LAPTOP_MODE" = true ]; then
+        info "Laptop mode enabled; installing iwd..."
         pacstrap /mnt iwd
     fi
 
-    echo "Essential packages installed."
+    success "Essential packages installed."
 }
 
 ### FUNCTION: Generate fstab ###
 generate_fstab() {
-    echo "Generating fstab..."
+    step "Generating fstab"
+    info "Running genfstab -U /mnt > /mnt/etc/fstab..."
     genfstab -U /mnt > /mnt/etc/fstab
-    echo "fstab generation complete."
+    success "fstab generation complete."
 }
 
 ### FUNCTION: Set Keyboard Layout ###
 set_keymap() {
-    echo "Setting keyboard layout to $KEYMAP..."
+    step "Configuring keyboard layout"
+    info "Setting keyboard layout to $KEYMAP..."
     case "$KEYMAP" in
         colemak)
             echo "KEYMAP=colemak" > /mnt/etc/vconsole.conf
@@ -76,15 +81,17 @@ set_keymap() {
             echo "KEYMAP=us" > /mnt/etc/vconsole.conf
             ;;
         *)
-            echo "Invalid keymap selected, defaulting to US QWERTY."
+            warn "Invalid keymap selected, defaulting to US QWERTY."
             echo "KEYMAP=us" > /mnt/etc/vconsole.conf
             ;;
     esac
 }
 
 setup_system() {
+    step "System setup"
     install_base_system
     install_essentials
     generate_fstab
     set_keymap
+    success "System setup complete."
 }

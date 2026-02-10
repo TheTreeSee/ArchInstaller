@@ -47,8 +47,8 @@ interactive_config() {
         return
     fi
 
-    echo
-    echo "Press Enter to keep current values or enter new values when prompted."
+    step "Interactive configuration"
+    info "Press Enter to keep current values or enter new values when prompted."
 
     # Get all variables from config file
     local vars=($(get_config_vars))
@@ -73,16 +73,21 @@ interactive_config() {
     # Save changes to config file
     echo -e "$new_config" > "config/conf.conf"
 
+    info "Reloading configuration from config/conf.conf..."
     get_config "config/conf.conf"
 
-    echo
+    info "Using the following configuration:"
     display_settings "config/conf.conf"
 }
 
 config_setup() {
+    info "Loading base configuration from config/settings.conf..."
     get_config "config/settings.conf"
     if [[ "$OVERWRITE" == true ]]; then
+        info "Overwrite enabled; applying overrides from config/settings.conf.env..."
         get_config "config/settings.conf.env" # overwrite settings with settings from env
     fi
+    info "Current configuration values:"
+    display_settings "config/settings.conf"
     interactive_config
 }

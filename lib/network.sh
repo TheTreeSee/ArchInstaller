@@ -1,7 +1,10 @@
 #!/bin/bash
 
 setup_network() {
-    # Enable systemd-networkd and systemd-resolved
+    step "Network configuration"
+    info "Creating basic DHCP systemd-networkd profiles for all non-loopback interfaces..."
+
+    # Enable systemd-networkd and systemd-resolved (left commented for now)
     # arch-chroot /mnt systemctl enable systemd-networkd
     # arch-chroot /mnt systemctl enable systemd-resolved
 
@@ -12,6 +15,7 @@ setup_network() {
     interfaces=$(ls /sys/class/net | grep -v lo)
 
     for iface in $interfaces; do
+        info "Configuring DHCP for interface $iface..."
         # Create a .network file for each interface
         cat <<EOF > /mnt/etc/systemd/network/20-$iface.network
 [Match]
@@ -21,6 +25,8 @@ Name=$iface
 DHCP=yes
 EOF
     done
+
+    success "Network configuration files created."
 }
 
 

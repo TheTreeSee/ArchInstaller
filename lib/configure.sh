@@ -1,18 +1,23 @@
 #!/bin/bash
 
+_log_prefix="[chroot]"
+
 # Set hostname
 set_hostname() {
+    echo "[INFO] ${_log_prefix} Setting hostname to '$HOSTNAME'..."
     echo "$HOSTNAME" > /etc/hostname
 }
 
 # Set timezone
 set_timezone() {
+    echo "[INFO] ${_log_prefix} Setting timezone to '$TIMEZONE'..."
     ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime
     hwclock --systohc
 }
 
 # Configure locale
 configure_locale() {
+    echo "[INFO] ${_log_prefix} Configuring locale '$LOCALE'..."
     echo "$LOCALE.UTF-8 UTF-8" > /etc/locale.gen
     locale-gen
     echo "LANG=$LOCALE" > /etc/locale.conf
@@ -20,47 +25,53 @@ configure_locale() {
 
 # Install GRUB
 install_grub() {
+    echo "[INFO] ${_log_prefix} Installing GRUB bootloader..."
     # Sanity: /boot must be mounted and contain a kernel
     if ! mountpoint -q /boot; then
-        echo "❌ ERROR: /boot is not a mountpoint inside chroot. ESP likely not mounted."
+        echo "[ERROR] ${_log_prefix} /boot is not a mountpoint inside chroot. ESP likely not mounted."
         exit 1
     fi
 
     if ! ls /boot/vmlinuz-* >/dev/null 2>&1; then
-        echo "❌ ERROR: No kernel found in /boot (no /boot/vmlinuz-*)."
-        echo "This usually means the ESP was mounted after pacstrap, hiding the kernel files."
-        echo "Try reinstalling kernel: pacman -S linux && mkinitcpio -P"
+        echo "[ERROR] ${_log_prefix} No kernel found in /boot (no /boot/vmlinuz-*)."
+        echo "        ${_log_prefix} This usually means the ESP was mounted after pacstrap, hiding the kernel files."
+        echo "        ${_log_prefix} Try reinstalling kernel: pacman -S linux && mkinitcpio -P"
         exit 1
     fi
 
     grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
     grub-mkconfig -o /boot/grub/grub.cfg
+    echo "[OK] ${_log_prefix} GRUB installation complete."
 }
 
 
 # Set root password
 set_password() {
     if [ -z "$PASSWORD" ] && [ "$UNATTENDED" = false ]; then
-        echo "Set root password:"
+        echo "[INFO] ${_log_prefix} Set root password:"
         passwd
     else
+        echo "[INFO] ${_log_prefix} Setting root password from configuration..."
         echo "root:$PASSWORD" | chpasswd
     fi
 }
 
 # Create user and add to wheel
 user_add() {
+    echo "[INFO] ${_log_prefix} Creating user '$USERNAME' and adding to wheel group..."
     useradd -m -G wheel "$USERNAME"
     if [ -z "$PASSWORD" ] && [ "$UNATTENDED" = false ]; then
-        echo "Set password for $USERNAME:"
+        echo "[INFO] ${_log_prefix} Set password for $USERNAME:"
         passwd "$USERNAME"
     else
+        echo "[INFO] ${_log_prefix} Setting password for $USERNAME from configuration..."
         echo "$USERNAME:$PASSWORD" | chpasswd
     fi
 }
 
 # Configure sudo
 configure_sudo() {
+    echo "[INFO] ${_log_prefix} Securing sudoers file /etc/sudoers.d/00-wheel..."
     chmod 440 /etc/sudoers.d/00-wheel
 }
 

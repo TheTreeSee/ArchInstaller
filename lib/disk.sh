@@ -7,7 +7,8 @@ auto_partition() {
         return
     fi
 
-    echo "Partitioning $DISK for UEFI + GRUB installation..."
+    step "Automatic disk partitioning"
+    info "Partitioning $DISK for UEFI + GRUB installation..."
 
     wipefs --all --force "$DISK"
     parted "$DISK" --script mklabel gpt
@@ -29,7 +30,7 @@ auto_partition() {
         parted "$DISK" --script mkpart PRIMARY "$FILESYSTEM" 1024MiB "$ROOT_SIZE"
     fi
 
-    echo "Disk partitioning completed."
+    success "Disk partitioning completed."
 }
 
 ### FUNCTION: Format Partitions ###
@@ -40,7 +41,8 @@ format_partitions() {
         part_prefix=""
     fi
 
-    echo "Formatting partitions..."
+    step "Formatting partitions"
+    info "Formatting EFI, root, and optional swap partitions..."
 
     # EFI Partition (first partition)
     mkfs.fat -F32 "${DISK}${part_prefix}${EFI}"
@@ -54,7 +56,7 @@ format_partitions() {
         swapon "${DISK}${part_prefix}${SWAP}"
     fi
 
-    echo "Formatting complete."
+    success "Formatting complete."
 }
 
 ### FUNCTION: Mount Partitions ###
@@ -65,7 +67,8 @@ mount_partitions() {
         part_prefix=""
     fi
 
-    echo "Mounting partitions..."
+    step "Mounting partitions"
+    info "Mounting root and EFI partitions to /mnt and /mnt/boot..."
 
     # Mount root partition
     mount "${DISK}${part_prefix}${ROOT}" /mnt
@@ -75,19 +78,19 @@ mount_partitions() {
     mount "${DISK}${part_prefix}${EFI}" /mnt/boot
 
     # Swap is already enabled by swapon
-    echo "Mounting complete."
+    success "Mounting complete."
 }
 
 ### FUNCTION: Manual Partitioning ###
 manual_partition() {
-    echo "=== Manual Partitioning Mode ==="
-    echo "Please create your partitions using tools like 'cfdisk', 'fdisk', or 'parted'."
-    echo "Make sure to create and format:"
-    echo "- EFI partition (usually FAT32, ~1024MiB)"
-    echo "- Root partition (ext4 recommended)"
-    echo "- Optional swap partition"
+    step "Manual partitioning mode"
+    info "Please create your partitions using tools like 'cfdisk', 'fdisk', or 'parted'."
+    info "Make sure to create and format:"
+    info "- EFI partition (usually FAT32, ~1024MiB)"
+    info "- Root partition (ext4 recommended)"
+    info "- Optional swap partition"
     echo
-    echo "You will now be dropped into a shell. Type 'exit' when done."
+    info "You will now be dropped into a shell. Type 'exit' when done."
     press_enter "Press Enter to open a shell..."
 
     if [ -t 0 ]; then
@@ -96,27 +99,28 @@ manual_partition() {
         bash < /dev/tty
     fi
 
-    echo "Exited manual partition shell. Continuing setup..."
+    info "Exited manual partition shell. Continuing setup..."
 }
 
 ### FUNCTION: Select Disk ###
 select_disk() {
-    echo "Available Disks:"
+    step "Disk selection"
+    info "Available disks:"
     lsblk -d -n -p -o NAME,SIZE | grep -E "/dev/(sd|nvme|vd)"
 
     DISK=$(ask_user "Enter the disk to install Arch Linux on" "$DISK")
 
     if [[ ! -b "$DISK" ]]; then
-        echo "Error: Selected disk $DISK does not exist!" >&2
+        error "Selected disk $DISK does not exist!"
         exit 1
     fi
 
-    echo "Selected disk: $DISK"
+    info "Selected disk: $DISK"
 }
 
 ### FUNCTION: Set Partition Variables After Manual Partitioning ###
 set_partition_variables() {
-    echo "=== Set Partition Variables ==="
+    step "Set partition variables"
 
     safe_read EFI "Enter EFI partition number (e.g., 1): "
     safe_read ROOT "Enter root partition number (e.g., 2): "
@@ -131,6 +135,8 @@ set_partition_variables() {
 
 ### FUNCTION: Disk Setup Flow ###
 setup_disk() {
+    step "Disk setup"
+
     if [[ "$UNATTENDED" == true ]]; then
         auto_partition
         format_partitions
@@ -138,10 +144,10 @@ setup_disk() {
         return
     fi
 
-    echo "Disk Partitioning Options:"
-    echo "1) Use default disk ($DISK) and auto-partition"
-    echo "2) Select a different disk and auto-partition"
-    echo "3) Manually partition the disk"
+    step "Disk partitioning options"
+    info "1) Use default disk ($DISK) and auto-partition"
+    info "2) Select a different disk and auto-partition"
+    info "3) Manually partition the disk"
 
     CHOICE=$(ask_user "Choose an option (1/2/3)" "1")
 
@@ -149,6 +155,6 @@ setup_disk() {
         1) auto_partition && format_partitions && mount_partitions ;;
         2) select_disk && auto_partition && format_partitions && mount_partitions ;;
         3) manual_partition && set_partition_variables && format_partitions && mount_partitions ;;
-        *) echo "Invalid option, exiting." && exit 1 ;;
+        *) error "Invalid disk partitioning option selected, exiting."; exit 1 ;;
     esac
 }

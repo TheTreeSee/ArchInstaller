@@ -98,7 +98,7 @@ setup_disk
 setup_system
 
 # lib/security.sh
-configure_security
+#! configure_security
 
 # lib/configure.sh
 cp assets/00-wheel /mnt/etc/sudoers.d/00-wheel

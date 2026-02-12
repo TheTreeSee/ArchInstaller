@@ -5,23 +5,27 @@ OVERWRITE=false
 
 usage() {
   cat <<EOF
-Usage: $0 [-u URL] [-o] [-h]
+Usage: $0 [-u URL] [-o] [-i] [-h]
 
 Options:
   -u URL    Set custom base URL (default: GitHub)
   -o        Overwrite existing files
+  -i        Force interactive mode (UNATTENDED=false)
   -h        Show this help message
 EOF
   exit 1
 }
 
-while getopts ":u:oh" opt; do
+while getopts ":u:oih" opt; do
   case $opt in
     u)
       REPO_URL="$OPTARG"
       ;;
     o)
       OVERWRITE=true
+      ;;
+    i)
+      UNATTENDED_OVERRIDE=false
       ;;
     h)
       usage

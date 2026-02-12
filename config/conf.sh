@@ -87,6 +87,14 @@ config_setup() {
         info "Overwrite enabled; applying overrides from config/settings.conf.env..."
         get_config "config/settings.conf.env" # overwrite settings with settings from env
     fi
+
+    # If an explicit override for unattended mode was provided via CLI, honor it
+    if [[ "${UNATTENDED_OVERRIDE:-}" == "false" ]]; then
+        UNATTENDED=false
+        export UNATTENDED
+        info "CLI override: forcing UNATTENDED=false (interactive mode)."
+    fi
+
     info "Current configuration values:"
     display_settings "config/settings.conf"
     interactive_config

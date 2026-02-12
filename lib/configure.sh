@@ -15,6 +15,13 @@ set_timezone() {
     hwclock --systohc
 }
 
+enable_services() {
+    echo "[INFO] ${_log_prefix} Enabling services..."
+    systemctl enable systemd-timesyncd
+    systemctl enable systemd-networkd
+    systemctl enable systemd-resolved
+}
+
 # Configure locale
 configure_locale() {
     echo "[INFO] ${_log_prefix} Configuring locale '$LOCALE'..."
@@ -106,6 +113,7 @@ else
     # Default flow
     set_hostname
     set_timezone
+    enable_services
     configure_locale
     install_grub
     set_password
